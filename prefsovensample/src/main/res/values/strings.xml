@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PrefsOvenSample</string>
+    <string name="action_clear">Clear</string>
+</resources>
