@@ -38,7 +38,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 // For local install
 group 'com.github.k24'
-version '0.1.0'
+version '0.2.0'
 
 // build a jar with source files
 task sourcesJar(type: Jar) {
