@@ -16,9 +16,12 @@ public class Prefs {
         vendor = PrefsOvenVendor.vendor(context);
     }
 
-    public synchronized static void installWith(Context context, PrefsConfig config) {
+    public synchronized static void install(Context context, PrefsConfig config) {
         vendor = PrefsOvenVendor.vendor(context);
-        vendor.setPrefFieldFactory(config.prefFieldFactory);
+        if (config != null) {
+            vendor.setFieldFactory(config.fieldFactory);
+            vendor.setElementFactory(config.elementFactory);
+        }
     }
 
     public synchronized static <T extends PrefsOven> T oven(@NonNull Class<T> clazz) {

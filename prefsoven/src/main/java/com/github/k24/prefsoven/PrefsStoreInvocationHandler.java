@@ -2,11 +2,11 @@ package com.github.k24.prefsoven;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.github.k24.prefsoven.factory.AbstractElementFactory;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 import com.github.k24.prefsoven.store.Element;
 import com.github.k24.prefsoven.store.Key;
@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,42 +35,17 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
     private final Model model;
     private PrefsStoreOven.ControlPanel controlPanel;
 
-    public PrefsStoreInvocationHandler(Context context, Class<T> clazz, Map<Class<?>, Model> modelMap) throws InvocationTargetException, IllegalAccessException {
+    public PrefsStoreInvocationHandler(Context context, Class<T> clazz, Map<Class<?>, Model> modelMap, AbstractElementFactory elementFactory) throws InvocationTargetException, IllegalAccessException {
         this.clazz = clazz;
         SharedPreferences prefs = PrefsInvocationHandler.createSharedPreferences(context, clazz);
         if (modelMap.containsKey(clazz)) {
             model = modelMap.get(clazz);
             prefsHelper = (PrefFieldHelper) model.getPrefFieldFactory();
         } else {
-            prefsHelper = new PrefFieldHelper(prefs);
-            model = Model.create(prefsHelper, createElementMap(context, clazz, prefsHelper));
+            prefsHelper = new PrefFieldHelper(context, prefs);
+            prefsHelper.setElementFactory(elementFactory);
+            model = Model.create(prefs, prefsHelper, prefsHelper.createElementMap(clazz));
             modelMap.put(clazz, model);
-        }
-    }
-
-    private static <T> Map<String, Element<?>> createElementMap(Context context, Class<T> clazz, PrefFieldHelper prefsHelper) {
-        Resources res = context.getResources();
-        LinkedHashMap<String, Element<?>> map = new LinkedHashMap<>();
-        for (Method method : clazz.getMethods()) {
-            Class<?> returnType = method.getReturnType();
-            if (returnType.getSuperclass() == Element.class) {
-                String name = PrefsHelper.getKey(res, method);
-                Element<?> element = createElementByElementClass(returnType, name, res, method);
-                map.put(name, element);
-                prefsHelper.addMethodToElement(method, element);
-            }
-        }
-        return map;
-    }
-
-    private static Element<?> createElementByElementClass(Class<?> elementClass, String name, Resources res, Method method) {
-        // TODO Refactor to create an element from factory
-        try {
-            Field prototypeValue = elementClass.getDeclaredField("PROTOTYPE_VALUE");
-            Class<?> typeClass = prototypeValue.getType();
-            return (Element<?>) elementClass.getConstructor(String.class, typeClass).newInstance(name, typeClass.cast(PrefFieldHelper.getDefaultValue(typeClass, res, method)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -173,7 +147,7 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
         return controlPanel;
     }
 
-    Pid preheat(@Nullable  Object source) {
+    Pid preheat(@Nullable Object source) {
         HashMap<Element<?>, Field> map = new HashMap<>();
         Class<?> sourceClass = source == null ? null : source.getClass();
         for (Method method : clazz.getMethods()) {

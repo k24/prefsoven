@@ -2,6 +2,9 @@ package com.github.k24.prefsoven;
 
 import android.os.Build;
 
+import com.github.k24.prefsoven.custom.CustomBread;
+import com.github.k24.prefsoven.custom.CustomElementFactory;
+import com.github.k24.prefsoven.custom.CustomPrefsStore;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 import com.github.k24.prefsoven.sample.TestBread;
 import com.github.k24.prefsoven.sample.TestPrefsStore;
@@ -189,5 +192,34 @@ public class PrefsStoreOvenTest {
         assertThat(pid.value(prefsStore.boolean1()).get()).isTrue();
         assertThat(pid.value(prefsStore.string1()).get()).isEqualTo("5");
         assertThat(pid.value(prefsStore.stringSet1()).get()).contains("6", "7", "8");
+    }
+
+    @Test
+    public void customElement() throws Exception {
+        ovenVendor.setElementFactory(new CustomElementFactory());
+        CustomPrefsStore store = ovenVendor.createStore(CustomPrefsStore.class);
+
+        // Default
+        Pid pid = store.getControlPanel().preheat();
+        CustomBread bread = store.cook(pid, CustomBread.class);
+
+        assertThat(bread.double1)
+                .isEqualTo(0);
+
+        bread.double1 = 123.4;
+
+        // Preheat
+        store.getControlPanel().preheat(pid, bread);
+
+        assertThat(store.double1().values().get(0).get())
+                .isEqualTo(123.4);
+
+        // Bake value
+        bread.double1 = 0;
+
+        store.bake(pid, bread);
+
+        assertThat(bread.double1)
+                .isEqualTo(123.4);
     }
 }

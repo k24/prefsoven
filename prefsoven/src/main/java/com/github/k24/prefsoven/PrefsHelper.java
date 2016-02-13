@@ -9,7 +9,7 @@ import android.util.TypedValue;
 
 import com.github.k24.prefsoven.annotation.DefaultRes;
 import com.github.k24.prefsoven.annotation.KeyRes;
-import com.github.k24.prefsoven.factory.PrefFieldFactory;
+import com.github.k24.prefsoven.factory.AbstractFieldFactory;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 import com.github.k24.prefsoven.field.BooleanPref;
 import com.github.k24.prefsoven.field.FloatPref;
@@ -34,7 +34,7 @@ import java.util.Set;
  */
 final class PrefsHelper extends SharedPreferencesHelper {
     final Context context;
-    private PrefFieldFactory factory;
+    private AbstractFieldFactory factory;
     private HashMap<Method, Pair<String, Integer>> keyDefaultResMap = new HashMap<>();
 
     public PrefsHelper(Context context, SharedPreferences sharedPreferences) {
@@ -42,7 +42,7 @@ final class PrefsHelper extends SharedPreferencesHelper {
         this.context = context;
     }
 
-    public void setFactory(PrefFieldFactory factory) {
+    public void setFactory(AbstractFieldFactory factory) {
         this.factory = factory;
     }
 
@@ -54,10 +54,10 @@ final class PrefsHelper extends SharedPreferencesHelper {
             return (AbstractOvenPrefField<?>) fieldGetter.get(this, keyAndDefaultRes.first, keyAndDefaultRes.second);
         } else {
             if (factory == null)
-                throw new UnsupportedOperationException("You should set PrefFieldFactory for: " + method.getReturnType());
+                throw new UnsupportedOperationException("You should set AbstractFieldFactory for: " + method.getReturnType());
             AbstractOvenPrefField<?> field = factory.createField(context, getSharedPreferences(), method.getReturnType(), keyAndDefaultRes.first, keyAndDefaultRes.second);
             if (field == null)
-                throw new UnsupportedOperationException("Your PrefFieldFactory should implement Pref for: " + method.getReturnType());
+                throw new UnsupportedOperationException("Your AbstractFieldFactory should implement Pref for: " + method.getReturnType());
             return field;
         }
     }
@@ -80,37 +80,37 @@ final class PrefsHelper extends SharedPreferencesHelper {
             map.put(IntPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new IntPref(prefsHelper.intField(key, PrefFieldFactory.getIntDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new IntPref(prefsHelper.intField(key, AbstractFieldFactory.getIntDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
             map.put(FloatPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new FloatPref(prefsHelper.floatField(key, PrefFieldFactory.getFloatDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new FloatPref(prefsHelper.floatField(key, AbstractFieldFactory.getFloatDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
             map.put(LongPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new LongPref(prefsHelper.longField(key, PrefFieldFactory.getLongDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new LongPref(prefsHelper.longField(key, AbstractFieldFactory.getLongDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
             map.put(BooleanPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new BooleanPref(prefsHelper.booleanField(key, PrefFieldFactory.getBooleanDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new BooleanPref(prefsHelper.booleanField(key, AbstractFieldFactory.getBooleanDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
             map.put(StringPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new StringPref(prefsHelper.stringField(key, PrefFieldFactory.getStringDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new StringPref(prefsHelper.stringField(key, AbstractFieldFactory.getStringDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
             map.put(StringSetPref.class, new FieldGetter() {
                 @Override
                 public Object get(PrefsHelper prefsHelper, String key, int defaultResId) {
-                    return new StringSetPref(prefsHelper.stringSetField(key, PrefFieldFactory.getStringSetDefaultValue(prefsHelper.context.getResources(), defaultResId)));
+                    return new StringSetPref(prefsHelper.stringSetField(key, AbstractFieldFactory.getStringSetDefaultValue(prefsHelper.context.getResources(), defaultResId)));
                 }
             });
 

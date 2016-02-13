@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
-import com.github.k24.prefsoven.factory.PrefFieldFactory;
+import com.github.k24.prefsoven.factory.AbstractFieldFactory;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 
 import org.androidannotations.api.sharedpreferences.AbstractPrefField;
@@ -15,12 +15,16 @@ import org.androidannotations.api.sharedpreferences.SharedPreferencesCompat;
 /**
  * Created by k24 on 2016/02/13.
  */
-public class CustomPrefFieldFactory extends PrefFieldFactory {
+public class CustomFieldFactory extends AbstractFieldFactory {
 
     @NonNull
     @Override
     public AbstractOvenPrefField<?> createField(Context context, final SharedPreferences prefs, Class<?> type, String key, int defaultResId) {
-        return new DoublePref(new AbstractPrefField<Double>(prefs, key, getDoubleDefaultValue(context.getResources(), defaultResId)) {
+        return doublePref(prefs, key, getDoubleDefaultValue(context.getResources(), defaultResId));
+    }
+
+    static DoublePref doublePref(SharedPreferences prefs, String key, Double defaultValue) {
+        return new DoublePref(new AbstractPrefField<Double>(prefs, key, defaultValue) {
             @Override
             public Double getOr(Double aDouble) {
                 return Double.valueOf(sharedPreferences.getString(key, String.valueOf(aDouble)));

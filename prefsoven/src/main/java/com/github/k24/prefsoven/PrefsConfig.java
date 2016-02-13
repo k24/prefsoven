@@ -1,18 +1,21 @@
 package com.github.k24.prefsoven;
 
-import com.github.k24.prefsoven.factory.PrefFieldFactory;
+import com.github.k24.prefsoven.factory.AbstractElementFactory;
+import com.github.k24.prefsoven.factory.AbstractFieldFactory;
 
 /**
  * Created by k24 on 2016/02/13.
  */
 public class PrefsConfig {
-    PrefFieldFactory prefFieldFactory;
+    AbstractFieldFactory fieldFactory;
+    AbstractElementFactory elementFactory;
 
     public PrefsConfig() {
     }
 
     private PrefsConfig(Builder builder) {
-        prefFieldFactory = builder.prefFieldFactory;
+        fieldFactory = builder.fieldFactory;
+        elementFactory = builder.elementFactory;
     }
 
     public static Builder newBuilder() {
@@ -21,13 +24,19 @@ public class PrefsConfig {
 
 
     public static final class Builder {
-        private PrefFieldFactory prefFieldFactory;
+        private AbstractFieldFactory fieldFactory;
+        private AbstractElementFactory elementFactory;
 
         private Builder() {
         }
 
-        public Builder prefFieldFactory(PrefFieldFactory val) {
-            prefFieldFactory = val;
+        public Builder fieldFactory(AbstractFieldFactory val) {
+            fieldFactory = val;
+            return this;
+        }
+
+        public Builder elementFactory(AbstractElementFactory val) {
+            elementFactory = val;
             return this;
         }
 

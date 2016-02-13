@@ -3,6 +3,8 @@ package com.github.k24.prefsoven.store;
 import android.content.SharedPreferences;
 import android.support.v4.util.Pair;
 
+import com.github.k24.prefsoven.factory.PrefFieldFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import java.util.Map;
  * Created by k24 on 2015/12/30.
  */
 public final class Model {
+    private final SharedPreferences prefs;
     private final PrefFieldFactory prefFieldFactory;
     private final Map<String, Element<?>> elementMap;
     private final List<Key<?>> keys = new ArrayList<>();
@@ -21,11 +24,12 @@ public final class Model {
 
     private final Object lock = new Object();
 
-    public static Model create(PrefFieldFactory prefFieldFactory, Map<String, Element<?>> elementMap) {
-        return new Model(prefFieldFactory, elementMap);
+    public static Model create(SharedPreferences prefs, PrefFieldFactory prefFieldFactory, Map<String, Element<?>> elementMap) {
+        return new Model(prefs, prefFieldFactory, elementMap);
     }
 
-    Model(PrefFieldFactory prefFieldFactory, Map<String, Element<?>> elementMap) {
+    Model(SharedPreferences prefs, PrefFieldFactory prefFieldFactory, Map<String, Element<?>> elementMap) {
+        this.prefs = prefs;
         this.prefFieldFactory = prefFieldFactory;
         this.elementMap = elementMap;
         reset();
@@ -34,10 +38,9 @@ public final class Model {
     public void reset() {
         synchronized (lock) {
             // TODO Async
-            SharedPreferences sharedPreferences = prefFieldFactory.getPrefs();
             Map<Object, Pid> pidMap = Pid.createKeyPidMap();
 
-            for (String keyString : sharedPreferences.getAll().keySet()) {
+            for (String keyString : prefs.getAll().keySet()) {
                 Pair<Pid, ? extends Element<?>> pair = Pid.create(pidMap, keyString, elementMap);
                 if (pair == null) continue;
                 Pid pid = pair.first;

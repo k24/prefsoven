@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
-import com.github.k24.prefsoven.factory.PrefFieldFactory;
+import com.github.k24.prefsoven.factory.AbstractElementFactory;
+import com.github.k24.prefsoven.factory.AbstractFieldFactory;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 import com.github.k24.prefsoven.store.Model;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -31,14 +33,19 @@ final class PrefsOvenVendor {
     private final Context context;
     private final Map<Method, AbstractOvenPrefField<?>> pefFieldMap = new HashMap<>();
     private final Map<Class<?>, Model> modelMap = new HashMap<>();
-    private PrefFieldFactory prefFieldFactory;
+    private AbstractFieldFactory fieldFactory;
+    private AbstractElementFactory elementFactory;
 
     PrefsOvenVendor(Context context) {
         this.context = context;
     }
 
-    public void setPrefFieldFactory(PrefFieldFactory prefFieldFactory) {
-        this.prefFieldFactory = prefFieldFactory;
+    public void setFieldFactory(AbstractFieldFactory fieldFactory) {
+        this.fieldFactory = fieldFactory;
+    }
+
+    public void setElementFactory(AbstractElementFactory elementFactory) {
+        this.elementFactory = elementFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -48,16 +55,21 @@ final class PrefsOvenVendor {
                 newPrefsHandler(clazz));
     }
 
+    private <T> PrefsInvocationHandler<T> newPrefsHandler(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
+        PrefsInvocationHandler<T> handler = new PrefsInvocationHandler<>(context, clazz, pefFieldMap);
+        handler.getPrefsHelper().setFactory(fieldFactory);
+        return handler;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends PrefsStoreOven> T createStore(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class<?>[]{clazz},
-                new PrefsStoreInvocationHandler<>(context, clazz, modelMap));
+                newPrefsStoreHandler(clazz));
     }
 
-    private <T> PrefsInvocationHandler<T> newPrefsHandler(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
-        PrefsInvocationHandler<T> handler = new PrefsInvocationHandler<>(context, clazz, pefFieldMap);
-        handler.getPrefsHelper().setFactory(prefFieldFactory);
+    private <T extends PrefsStoreOven> InvocationHandler newPrefsStoreHandler(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
+        PrefsStoreInvocationHandler<T> handler = new PrefsStoreInvocationHandler<>(context, clazz, modelMap, elementFactory);
         return handler;
     }
 

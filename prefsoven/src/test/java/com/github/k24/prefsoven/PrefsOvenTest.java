@@ -3,7 +3,7 @@ package com.github.k24.prefsoven;
 import android.os.Build;
 
 import com.github.k24.prefsoven.custom.CustomBread;
-import com.github.k24.prefsoven.custom.CustomPrefFieldFactory;
+import com.github.k24.prefsoven.custom.CustomFieldFactory;
 import com.github.k24.prefsoven.custom.CustomPrefs;
 import com.github.k24.prefsoven.sample.TestBread;
 import com.github.k24.prefsoven.sample.TestPrefs;
@@ -134,7 +134,7 @@ public class PrefsOvenTest {
 
     @Test
     public void customField() throws Exception {
-        ovenVendor.setPrefFieldFactory(new CustomPrefFieldFactory());
+        ovenVendor.setFieldFactory(new CustomFieldFactory());
         CustomPrefs prefs = ovenVendor.create(CustomPrefs.class);
 
         CustomBread bread = new CustomBread();
