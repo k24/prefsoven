@@ -3,7 +3,6 @@ package com.github.k24.prefsoven;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
  * Created by k24 on 2016/01/17.
@@ -15,6 +14,11 @@ public class Prefs {
 
     public synchronized static void install(Context context) {
         vendor = PrefsOvenVendor.vendor(context);
+    }
+
+    public synchronized static void installWith(Context context, PrefsConfig config) {
+        vendor = PrefsOvenVendor.vendor(context);
+        vendor.setPrefFieldFactory(config.prefFieldFactory);
     }
 
     public synchronized static <T extends PrefsOven> T oven(@NonNull Class<T> clazz) {

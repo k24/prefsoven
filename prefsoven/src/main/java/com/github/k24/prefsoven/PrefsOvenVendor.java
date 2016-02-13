@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import com.github.k24.prefsoven.factory.PrefFieldFactory;
 import com.github.k24.prefsoven.field.AbstractOvenPrefField;
 import com.github.k24.prefsoven.store.Model;
 
@@ -30,16 +31,21 @@ final class PrefsOvenVendor {
     private final Context context;
     private final Map<Method, AbstractOvenPrefField<?>> pefFieldMap = new HashMap<>();
     private final Map<Class<?>, Model> modelMap = new HashMap<>();
+    private PrefFieldFactory prefFieldFactory;
 
     PrefsOvenVendor(Context context) {
         this.context = context;
+    }
+
+    public void setPrefFieldFactory(PrefFieldFactory prefFieldFactory) {
+        this.prefFieldFactory = prefFieldFactory;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends PrefsOven> T create(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class<?>[]{clazz},
-                new PrefsInvocationHandler<>(context, clazz, pefFieldMap));
+                newPrefsHandler(clazz));
     }
 
     @SuppressWarnings("unchecked")
@@ -47,6 +53,12 @@ final class PrefsOvenVendor {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class<?>[]{clazz},
                 new PrefsStoreInvocationHandler<>(context, clazz, modelMap));
+    }
+
+    private <T> PrefsInvocationHandler<T> newPrefsHandler(Class<T> clazz) throws InvocationTargetException, IllegalAccessException {
+        PrefsInvocationHandler<T> handler = new PrefsInvocationHandler<>(context, clazz, pefFieldMap);
+        handler.getPrefsHelper().setFactory(prefFieldFactory);
+        return handler;
     }
 
     public SharedPreferences prefs(Class<?> clazz) {

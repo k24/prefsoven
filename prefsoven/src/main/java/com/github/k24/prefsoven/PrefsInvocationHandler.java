@@ -38,6 +38,10 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
         prefsHelper = new PrefsHelper(context, prefs);
     }
 
+    public PrefsHelper getPrefsHelper() {
+        return prefsHelper;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getDeclaringClass() == Object.class) {

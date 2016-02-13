@@ -2,6 +2,9 @@ package com.github.k24.prefsoven;
 
 import android.os.Build;
 
+import com.github.k24.prefsoven.custom.CustomBread;
+import com.github.k24.prefsoven.custom.CustomPrefFieldFactory;
+import com.github.k24.prefsoven.custom.CustomPrefs;
 import com.github.k24.prefsoven.sample.TestBread;
 import com.github.k24.prefsoven.sample.TestPrefs;
 
@@ -127,5 +130,33 @@ public class PrefsOvenTest {
         assertThat(prefs.boolean1().get()).isTrue();
         assertThat(prefs.string1().get()).isEqualTo("str5");
         assertThat(prefs.stringSet1().get()).contains("6", "7", "8");
+    }
+
+    @Test
+    public void customField() throws Exception {
+        ovenVendor.setPrefFieldFactory(new CustomPrefFieldFactory());
+        CustomPrefs prefs = ovenVendor.create(CustomPrefs.class);
+
+        CustomBread bread = new CustomBread();
+
+        // Bake default
+        prefs.bake(bread);
+
+        assertThat(bread.double1)
+                .isEqualTo(0);
+
+        // Preheat
+        bread.double1 = 123.4;
+
+        prefs.getControlPanel().preheat(bread);
+
+        assertThat(prefs.double1().get())
+                .isEqualTo(123.4);
+
+        // Cook value
+        bread = prefs.cook(CustomBread.class);
+
+        assertThat(bread.double1)
+                .isEqualTo(123.4);
     }
 }
