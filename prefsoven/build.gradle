@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 
+final VERSION_NAME = '0.2.0'
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -8,7 +10,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
     }
     buildTypes {
         release {
@@ -38,7 +40,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 // For local install
 group 'com.github.k24'
-version '0.2.0'
+version VERSION_NAME
 
 // build a jar with source files
 task sourcesJar(type: Jar) {
