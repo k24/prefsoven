@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.store.Element;
 
 /**
@@ -15,5 +15,5 @@ public abstract class AbstractElementFactory {
     public abstract Element<?> createElement(Class<?> elementClass, String key, Resources res, int defaultId);
 
     @NonNull
-    public abstract AbstractOvenPrefField<?> createPref(SharedPreferences prefs, String key, Object defaultValue, Class<?> typeClass);
+    public abstract AbstractPref<?> createPref(SharedPreferences prefs, String key, Object defaultValue, Class<?> typeClass);
 }

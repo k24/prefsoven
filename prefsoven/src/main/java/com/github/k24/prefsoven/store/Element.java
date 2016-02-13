@@ -3,7 +3,7 @@ package com.github.k24.prefsoven.store;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +45,8 @@ public abstract class Element<T> {
 
     protected abstract Class<T> getTypeClass();
 
-    public List<AbstractOvenPrefField<T>> values() {
-        ArrayList<AbstractOvenPrefField<T>> values = new ArrayList<>();
+    public List<AbstractPref<T>> values() {
+        ArrayList<AbstractPref<T>> values = new ArrayList<>();
         for (Key<T> key : keys) {
             values.add(key.value());
         }

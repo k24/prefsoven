@@ -5,7 +5,7 @@ import android.os.Build;
 import com.github.k24.prefsoven.custom.CustomBread;
 import com.github.k24.prefsoven.custom.CustomElementFactory;
 import com.github.k24.prefsoven.custom.CustomPrefsStore;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.sample.TestBread;
 import com.github.k24.prefsoven.sample.TestPrefsStore;
 import com.github.k24.prefsoven.store.Key;
@@ -114,10 +114,10 @@ public class PrefsStoreOvenTest {
 
         assertThat(prefsStore.int1().values())
                 .hasSize(1)
-                .has(new Condition<AbstractOvenPrefField<Integer>>() {
+                .has(new Condition<AbstractPref<Integer>>() {
                     @Override
-                    public boolean matches(AbstractOvenPrefField<Integer> abstractOvenPrefField) {
-                        return abstractOvenPrefField.get() == 100;
+                    public boolean matches(AbstractPref<Integer> abstractPref) {
+                        return abstractPref.get() == 100;
                     }
                 }, Index.atIndex(0));
     }
@@ -154,10 +154,10 @@ public class PrefsStoreOvenTest {
 
         assertThat(prefsStore.int1().values())
                 .hasSize(1)
-                .has(new Condition<AbstractOvenPrefField<Integer>>() {
+                .has(new Condition<AbstractPref<Integer>>() {
                     @Override
-                    public boolean matches(AbstractOvenPrefField<Integer> abstractOvenPrefField) {
-                        return abstractOvenPrefField.get() == 100;
+                    public boolean matches(AbstractPref<Integer> abstractPref) {
+                        return abstractPref.get() == 100;
                     }
                 }, Index.atIndex(0));
     }

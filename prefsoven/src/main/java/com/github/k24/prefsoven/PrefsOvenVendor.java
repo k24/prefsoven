@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.github.k24.prefsoven.factory.AbstractElementFactory;
 import com.github.k24.prefsoven.factory.AbstractFieldFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.store.Model;
 
 import java.lang.reflect.InvocationHandler;
@@ -31,7 +31,7 @@ final class PrefsOvenVendor {
     }
 
     private final Context context;
-    private final Map<Method, AbstractOvenPrefField<?>> pefFieldMap = new HashMap<>();
+    private final Map<Method, AbstractPref<?>> pefFieldMap = new HashMap<>();
     private final Map<Class<?>, Model> modelMap = new HashMap<>();
     private AbstractFieldFactory fieldFactory;
     private AbstractElementFactory elementFactory;

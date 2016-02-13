@@ -2,7 +2,7 @@ package com.github.k24.prefsoven.store;
 
 import android.support.annotation.NonNull;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 /**
  * Created by k24 on 2015/12/30.
@@ -17,7 +17,7 @@ public class Key<T> {
     @NonNull
     private final Element<T> element;
 
-    private AbstractOvenPrefField<T> value;
+    private AbstractPref<T> value;
 
     private volatile boolean removed;
 
@@ -36,9 +36,9 @@ public class Key<T> {
         return element;
     }
 
-    public synchronized AbstractOvenPrefField<T> value() {
+    public synchronized AbstractPref<T> value() {
         if (value == null) {
-            value = model.getPrefFieldFactory().createField(keyStirng, element.defaultValue(), element.getTypeClass());
+            value = model.getPrefFieldFactory().createPref(keyStirng, element.defaultValue(), element.getTypeClass());
         }
         return value;
     }

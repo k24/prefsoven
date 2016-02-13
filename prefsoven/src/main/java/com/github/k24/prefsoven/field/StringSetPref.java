@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by k24 on 2015/12/27.
  */
-public class StringSetPref extends AbstractOvenPrefField<Set<String>> {
+public class StringSetPref extends AbstractPref<Set<String>> {
     public StringSetPref(StringSetPrefField field) {
         super(field);
     }

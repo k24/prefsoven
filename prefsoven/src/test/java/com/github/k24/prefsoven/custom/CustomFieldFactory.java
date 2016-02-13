@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
 import com.github.k24.prefsoven.factory.AbstractFieldFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 import org.androidannotations.api.sharedpreferences.AbstractPrefField;
 import org.androidannotations.api.sharedpreferences.SharedPreferencesCompat;
@@ -19,7 +19,7 @@ public class CustomFieldFactory extends AbstractFieldFactory {
 
     @NonNull
     @Override
-    public AbstractOvenPrefField<?> createField(Context context, final SharedPreferences prefs, Class<?> type, String key, int defaultResId) {
+    public AbstractPref<?> createPref(Context context, final SharedPreferences prefs, Class<?> type, String key, int defaultResId) {
         return doublePref(prefs, key, getDoubleDefaultValue(context.getResources(), defaultResId));
     }
 

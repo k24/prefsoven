@@ -10,7 +10,7 @@ import android.util.TypedValue;
 import com.github.k24.prefsoven.annotation.DefaultRes;
 import com.github.k24.prefsoven.annotation.KeyRes;
 import com.github.k24.prefsoven.factory.AbstractFieldFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.field.BooleanPref;
 import com.github.k24.prefsoven.field.FloatPref;
 import com.github.k24.prefsoven.field.IntPref;
@@ -47,15 +47,15 @@ final class PrefsHelper extends SharedPreferencesHelper {
     }
 
     @NonNull
-    public AbstractOvenPrefField<?> createPrefField(Method method) {
+    public AbstractPref<?> createPrefField(Method method) {
         FieldGetter fieldGetter = TypeMap.FIELD_GETTER_MAP.get(method.getReturnType());
         Pair<String, Integer> keyAndDefaultRes = getKeyAndDefaultRes(method);
         if (fieldGetter != null) {
-            return (AbstractOvenPrefField<?>) fieldGetter.get(this, keyAndDefaultRes.first, keyAndDefaultRes.second);
+            return (AbstractPref<?>) fieldGetter.get(this, keyAndDefaultRes.first, keyAndDefaultRes.second);
         } else {
             if (factory == null)
                 throw new UnsupportedOperationException("You should set AbstractFieldFactory for: " + method.getReturnType());
-            AbstractOvenPrefField<?> field = factory.createField(context, getSharedPreferences(), method.getReturnType(), keyAndDefaultRes.first, keyAndDefaultRes.second);
+            AbstractPref<?> field = factory.createPref(context, getSharedPreferences(), method.getReturnType(), keyAndDefaultRes.first, keyAndDefaultRes.second);
             if (field == null)
                 throw new UnsupportedOperationException("Your AbstractFieldFactory should implement Pref for: " + method.getReturnType());
             return field;

@@ -5,7 +5,7 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
 import com.github.k24.prefsoven.factory.AbstractElementFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.store.Element;
 
 /**
@@ -21,7 +21,7 @@ public class CustomElementFactory extends AbstractElementFactory {
 
     @NonNull
     @Override
-    public AbstractOvenPrefField<?> createPref(SharedPreferences prefs, String key, Object defaultValue, Class<?> typeClass) {
+    public AbstractPref<?> createPref(SharedPreferences prefs, String key, Object defaultValue, Class<?> typeClass) {
         return CustomFieldFactory.doublePref(prefs, key, (Double) defaultValue);
     }
 }

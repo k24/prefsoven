@@ -7,7 +7,7 @@ import android.content.res.Resources;
 import com.github.k24.prefsoven.factory.AbstractElementFactory;
 import com.github.k24.prefsoven.factory.AbstractFieldFactory;
 import com.github.k24.prefsoven.factory.PrefFieldFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.field.BooleanPref;
 import com.github.k24.prefsoven.field.FloatPref;
 import com.github.k24.prefsoven.field.IntPref;
@@ -33,13 +33,13 @@ import java.util.Set;
 /**
  * Created by k24 on 2015/12/31.
  */
-final class PrefFieldHelper extends SharedPreferencesHelper implements PrefFieldFactory {
+final class PrefsStoreHelper extends SharedPreferencesHelper implements PrefFieldFactory {
 
     private final Map<Method, Element<?>> methodElementMap = new HashMap<>();
     private final Context context;
     private AbstractElementFactory elementFactory;
 
-    public PrefFieldHelper(Context context, SharedPreferences sharedPreferences) {
+    public PrefsStoreHelper(Context context, SharedPreferences sharedPreferences) {
         super(sharedPreferences);
         this.context = context;
     }
@@ -49,12 +49,12 @@ final class PrefFieldHelper extends SharedPreferencesHelper implements PrefField
     }
 
     @SuppressWarnings("unchecked")
-    public <T> AbstractOvenPrefField<T> createField(String keyStirng, T defaultValue, Class<T> typeClass) {
+    public <T> AbstractPref<T> createPref(String keyStirng, T defaultValue, Class<T> typeClass) {
         FieldGetter fieldGetter = TypeMap.FIELD_GETTER_MAP.get(typeClass);
         if (fieldGetter != null) {
-            return (AbstractOvenPrefField<T>) fieldGetter.get(this, keyStirng, defaultValue);
+            return (AbstractPref<T>) fieldGetter.get(this, keyStirng, defaultValue);
         } else if (elementFactory != null) {
-            AbstractOvenPrefField<T> prefField = (AbstractOvenPrefField<T>) elementFactory.createPref(getSharedPreferences(), keyStirng, defaultValue, typeClass);
+            AbstractPref<T> prefField = (AbstractPref<T>) elementFactory.createPref(getSharedPreferences(), keyStirng, defaultValue, typeClass);
             if (prefField == null)
                 throw new UnsupportedOperationException("Your AbstractElementFactory should implement Pref for: " + typeClass);
             return prefField;
@@ -103,38 +103,38 @@ final class PrefFieldHelper extends SharedPreferencesHelper implements PrefField
             fieldGetterMap.put(Integer.class, new FieldGetter() {
 
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new IntPref(prefsHelper.intField(keyString, (Integer) defaultValue));
                 }
             });
             fieldGetterMap.put(Float.class, new FieldGetter() {
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new FloatPref(prefsHelper.floatField(keyString, (Float) defaultValue));
                 }
             });
             fieldGetterMap.put(Long.class, new FieldGetter() {
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new LongPref(prefsHelper.longField(keyString, (Long) defaultValue));
                 }
             });
             fieldGetterMap.put(Boolean.class, new FieldGetter() {
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new BooleanPref(prefsHelper.booleanField(keyString, (Boolean) defaultValue));
                 }
             });
             fieldGetterMap.put(String.class, new FieldGetter() {
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new StringPref(prefsHelper.stringField(keyString, (String) defaultValue));
                 }
             });
             fieldGetterMap.put(Set.class, new FieldGetter() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue) {
+                public Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue) {
                     return new StringSetPref(prefsHelper.stringSetField(keyString, (Set<String>) defaultValue));
                 }
             });
@@ -189,7 +189,7 @@ final class PrefFieldHelper extends SharedPreferencesHelper implements PrefField
     }
 
     private interface FieldGetter {
-        Object get(PrefFieldHelper prefsHelper, String keyString, Object defaultValue);
+        Object get(PrefsStoreHelper prefsHelper, String keyString, Object defaultValue);
     }
 
     void addMethodToElement(Method method, Element<?> element) {

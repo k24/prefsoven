@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public abstract class AbstractFieldFactory {
     @NonNull
-    public abstract AbstractOvenPrefField<?> createField(Context context, SharedPreferences prefs, Class<?> type, String key, int defaultResId);
+    public abstract AbstractPref<?> createPref(Context context, SharedPreferences prefs, Class<?> type, String key, int defaultResId);
 
     public static int getIntDefaultValue(Resources res, int defaultResId) {
         return defaultResId == 0 ? 0 : res.getInteger(defaultResId);

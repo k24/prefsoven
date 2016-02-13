@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.k24.prefsoven.factory.AbstractElementFactory;
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 import com.github.k24.prefsoven.store.Element;
 import com.github.k24.prefsoven.store.Key;
 import com.github.k24.prefsoven.store.Model;
@@ -31,7 +31,7 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
     private static final String MODE = "mode";
     private static final String UNIQUE = "unique";
     private final Class<T> clazz;
-    private final PrefFieldHelper prefsHelper;
+    private final PrefsStoreHelper prefsHelper;
     private final Model model;
     private PrefsStoreOven.ControlPanel controlPanel;
 
@@ -40,9 +40,9 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
         SharedPreferences prefs = PrefsInvocationHandler.createSharedPreferences(context, clazz);
         if (modelMap.containsKey(clazz)) {
             model = modelMap.get(clazz);
-            prefsHelper = (PrefFieldHelper) model.getPrefFieldFactory();
+            prefsHelper = (PrefsStoreHelper) model.getPrefFieldFactory();
         } else {
-            prefsHelper = new PrefFieldHelper(context, prefs);
+            prefsHelper = new PrefsStoreHelper(context, prefs);
             prefsHelper.setElementFactory(elementFactory);
             model = Model.create(prefs, prefsHelper, prefsHelper.createElementMap(clazz));
             modelMap.put(clazz, model);
@@ -184,7 +184,7 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private static void getValueFromFieldNoThrow(Field field, Object source, AbstractOvenPrefField pref) {
+    private static void getValueFromFieldNoThrow(Field field, Object source, AbstractPref pref) {
         try {
             pref.put(field.get(source));
         } catch (IllegalAccessException e) {

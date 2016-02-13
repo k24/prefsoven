@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 import org.androidannotations.api.sharedpreferences.SharedPreferencesCompat;
 
@@ -28,10 +28,10 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
     private static final String UNIQUE = "unique";
     private final Class<T> clazz;
     private final PrefsHelper prefsHelper;
-    private final Map<Method, AbstractOvenPrefField<?>> prefFieldMap;
+    private final Map<Method, AbstractPref<?>> prefFieldMap;
     private PrefsOven.ControlPanel controlPanel;
 
-    public PrefsInvocationHandler(Context context, Class<T> clazz, Map<Method, AbstractOvenPrefField<?>> prefFieldMap) throws InvocationTargetException, IllegalAccessException {
+    public PrefsInvocationHandler(Context context, Class<T> clazz, Map<Method, AbstractPref<?>> prefFieldMap) throws InvocationTargetException, IllegalAccessException {
         this.clazz = clazz;
         this.prefFieldMap = prefFieldMap;
         SharedPreferences prefs = createSharedPreferences(context, clazz);
@@ -68,8 +68,8 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
                 }
                 throw new IllegalArgumentException("Don't overload " + methodName);
             default:
-                if (method.getReturnType().getSuperclass() == AbstractOvenPrefField.class) {
-                    AbstractOvenPrefField prefField = getPrefField(method);
+                if (method.getReturnType().getSuperclass() == AbstractPref.class) {
+                    AbstractPref prefField = getPrefField(method);
                     if (prefField != null) {
                         return prefField;
                     }
@@ -101,18 +101,18 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
     void preheat(Object source) {
         Class<?> sourceClass = source.getClass();
         for (Method method : clazz.getMethods()) {
-            if (method.getReturnType().getSuperclass() != AbstractOvenPrefField.class)
+            if (method.getReturnType().getSuperclass() != AbstractPref.class)
                 continue; // Not pref method
             Field field = getFieldNoThrow(sourceClass, method.getName());
             if (field == null) continue; // Missing in target
-            AbstractOvenPrefField prefField = (AbstractOvenPrefField) getPrefField(method);
+            AbstractPref prefField = (AbstractPref) getPrefField(method);
             if (prefField == null) continue; // Something wrong
             getValueFromFieldNoThrow(field, source, prefField);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static void getValueFromFieldNoThrow(Field field, Object source, AbstractOvenPrefField pref) {
+    private static void getValueFromFieldNoThrow(Field field, Object source, AbstractPref pref) {
         try {
             pref.put(field.get(source));
         } catch (IllegalAccessException e) {
@@ -125,11 +125,11 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
     private void bake(Object target) {
         Class<?> targetClass = target.getClass();
         for (Method method : clazz.getMethods()) {
-            if (method.getReturnType().getSuperclass() != AbstractOvenPrefField.class)
+            if (method.getReturnType().getSuperclass() != AbstractPref.class)
                 continue; // Not pref method
             Field field = getFieldNoThrow(targetClass, method.getName());
             if (field == null) continue; // Missing in target
-            AbstractOvenPrefField prefField = (AbstractOvenPrefField) getPrefField(method);
+            AbstractPref prefField = (AbstractPref) getPrefField(method);
             if (prefField == null) continue; // Something wrong
             setValueToFieldNoThrow(field, target, prefField.get());
         }
@@ -152,9 +152,9 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
         }
     }
 
-    private AbstractOvenPrefField getPrefField(Method method) {
+    private AbstractPref getPrefField(Method method) {
         synchronized (prefFieldMap) {
-            AbstractOvenPrefField<?> prefField = prefFieldMap.get(method);
+            AbstractPref<?> prefField = prefFieldMap.get(method);
             if (prefField == null) {
                 prefField = prefsHelper.createPrefField(method);
                 prefFieldMap.put(method, prefField);

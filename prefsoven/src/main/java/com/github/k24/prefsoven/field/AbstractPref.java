@@ -5,10 +5,10 @@ import org.androidannotations.api.sharedpreferences.AbstractPrefField;
 /**
  * Created by k24 on 2015/12/26.
  */
-public abstract class AbstractOvenPrefField<T> {
+public abstract class AbstractPref<T> {
     private final AbstractPrefField<T> field;
 
-    protected AbstractOvenPrefField(AbstractPrefField<T> field) {
+    protected AbstractPref(AbstractPrefField<T> field) {
         this.field = field;
     }
 

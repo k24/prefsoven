@@ -2,7 +2,7 @@ package com.github.k24.prefsoven.store;
 
 import android.support.v4.util.Pair;
 
-import com.github.k24.prefsoven.field.AbstractOvenPrefField;
+import com.github.k24.prefsoven.field.AbstractPref;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -66,9 +66,9 @@ public final class Pid {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> AbstractOvenPrefField<T> value(Element<T> element) {
+    public <T> AbstractPref<T> value(Element<T> element) {
         if (!isBoundWithKeys()) throw new IllegalStateException("Unbound");
-        return (AbstractOvenPrefField<T>) keys.get(element).value();
+        return (AbstractPref<T>) keys.get(element).value();
     }
 
     public Map<String, Object> valuesAsMapWithName() {
