@@ -63,7 +63,7 @@ final class PrefsInvocationHandler<T> implements InvocationHandler {
                     return target;
                 }
             case "getControlPanel":
-                if (args == null) {
+                if (args == null || args.length == 0) {
                     return getControlPanel();
                 }
                 throw new IllegalArgumentException("Don't overload " + methodName);
