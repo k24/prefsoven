@@ -9,4 +9,10 @@ public class BooleanPref extends AbstractPref<Boolean> {
     public BooleanPref(BooleanPrefField field) {
         super(field);
     }
+
+    public boolean toggle() {
+        boolean value = !get();
+        put(value);
+        return value;
+    }
 }
