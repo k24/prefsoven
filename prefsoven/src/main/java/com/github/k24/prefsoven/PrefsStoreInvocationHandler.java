@@ -142,6 +142,11 @@ final class PrefsStoreInvocationHandler<T> implements InvocationHandler {
                 public Pid pid(@NonNull Pid.Index index) {
                     return model.pid(index);
                 }
+
+                @Override
+                public void remove(@NonNull Pid pid) {
+                    model.remove(pid);
+                }
             };
         }
         return controlPanel;

@@ -46,5 +46,7 @@ public interface PrefsStoreOven {
 
         @Nullable
         Pid pid(@NonNull Pid.Index index);
+
+        void remove(@NonNull Pid pid);
     }
 }

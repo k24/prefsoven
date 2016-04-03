@@ -113,4 +113,18 @@ public final class Model {
             return pids.get(index);
         }
     }
+
+    public void remove(Pid pid) {
+        synchronized (lock) {
+            Pid.Index index = pid.index();
+            Collection<Key<?>> keys = pid.keys();
+            for (Key<?> key : keys) {
+                key.value().remove();
+                this.keys.remove(key);
+            }
+
+            pid.remove();
+            pids.remove(index);
+        }
+    }
 }

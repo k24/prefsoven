@@ -222,4 +222,44 @@ public class PrefsStoreOvenTest {
         assertThat(bread.double1)
                 .isEqualTo(123.4);
     }
+
+    @Test
+    public void remove() throws Exception {
+        TestPrefsStore prefsStore = ovenVendor.createStore(TestPrefsStore.class);
+        TestBread bread = new TestBread();
+
+        bread.int1 = 100;
+        bread.float1 = 2.3f;
+        bread.long1 = 4L;
+        bread.boolean1 = true;
+        bread.string1 = "5";
+        bread.stringSet1 = new HashSet<>(Arrays.asList("6", "7", "8"));
+
+        Pid pid1 = prefsStore.getControlPanel().preheat(bread);
+
+        TestBread bread2 = new TestBread();
+        bread2.int1 = 100 * 2;
+        bread2.float1 = 2.3f * 2;
+        bread2.long1 = 4L * 2;
+        bread2.boolean1 = false;
+        bread2.string1 = "52";
+        bread2.stringSet1 = new HashSet<>(Arrays.asList("7", "8", "9"));
+
+        Pid pid2 = prefsStore.getControlPanel().preheat(bread2);
+
+        prefsStore.getControlPanel().remove(pid1);
+
+        // Verify removed
+        assertThat(pid1.isBoundWithKeys()).isFalse();
+        assertThat(prefsStore.getControlPanel().pids()).hasSize(1);
+
+        // Verify remained
+        assertThat(pid2.value(prefsStore.int1()).get()).isEqualTo(100 * 2);
+        assertThat(pid2.value(prefsStore.float1()).get()).isEqualTo(2.3f * 2);
+        assertThat(pid2.value(prefsStore.long1()).get()).isEqualTo(4L * 2);
+        assertThat(pid2.value(prefsStore.boolean1()).get()).isFalse();
+        assertThat(pid2.value(prefsStore.string1()).get()).isEqualTo("52");
+        assertThat(pid2.value(prefsStore.stringSet1()).get()).contains("7", "8", "9");
+    }
+
 }

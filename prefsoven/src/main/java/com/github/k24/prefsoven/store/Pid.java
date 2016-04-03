@@ -6,6 +6,7 @@ import com.github.k24.prefsoven.field.AbstractPref;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -104,6 +105,11 @@ public final class Pid {
             key.clear();
         }
         keys.clear();
+    }
+
+    Collection<Key<?>> keys() {
+        if (removed) throw new IllegalStateException();
+        return keys.values();
     }
 
     public static class Index implements Serializable {
